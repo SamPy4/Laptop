@@ -115,6 +115,6 @@ class main():
             time.sleep(0.1)
             #print("-------------")
 
-
-main = main()
-main.run()
+if __name__ == "__main__":
+    main = main()
+    main.run()
