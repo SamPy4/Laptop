@@ -1,4 +1,3 @@
-
 import paho.mqtt.client as mqtt
 import subprocess
 import gtts, os, time
