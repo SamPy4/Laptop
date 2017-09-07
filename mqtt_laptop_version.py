@@ -103,6 +103,7 @@ class main():
     # mainloop starts here
     def run(self):
         start = time.time()
+        self.sendVariables()
         while True:
             self.client.loop()
 
