@@ -1,11 +1,15 @@
 import paho.mqtt.client as mqtt
 import subprocess
 import gtts, os, time
+from pynput.keyboard import Key, Controller
+
+
 
 
 class main():
     def __init__(self):
 
+        self.keyboard = Controller()
         self.port = 1883
         self.serverPath = "85468LAPTOPPATH"
 
@@ -52,6 +56,17 @@ class main():
             self.verify(False)
             pass
 
+        if msg.topic == self.serverPath + "/nextDia":
+            self.verify(True)
+            self.keyboard.press(Key.page_down)
+            self.keyboard.release(Key.page_down)
+            self.verify(False)
+        if msg.topic == self.serverPath + "/prevDia":
+            self.verify(True)
+            self.keyboard.press(Key.page_up)
+            self.keyboard.release(Key.page_up)
+            self.verify(False)
+
         if msg.topic == self.serverPath + "/lock":
             self.verify(True)
             os.system("rundll32.exe user32.dll, LockWorkStation")
@@ -81,18 +96,18 @@ class main():
             os.system("speech.mp3")
             self.verify(False)
 
-    def checkBattery(self):
-        out = subprocess.run("WMIC PATH Win32_Battery Get EstimatedChargeRemaining", stdout=subprocess.PIPE)
-        val = str(out.stdout)
-        val = val.replace("EstimatedChargeRemaining", "")
-        self.batteryCharge = val[10:12]
-        return self.batteryCharge
+    # def checkBattery(self):
+    #     out = subprocess.run("WMIC PATH Win32_Battery Get EstimatedChargeRemaining", stdout=subprocess.PIPE)
+    #     val = str(out.stdout)
+    #     val = val.replace("EstimatedChargeRemaining", "")
+    #     self.batteryCharge = val[10:12]
+    #     return self.batteryCharge
 
     def send(self):
         pass
 
-    def sendVariables(self):
-        self.client.publish(self.serverPath + "/charge", self.checkBattery())
+    # def sendVariables(self):
+    #     self.client.publish(self.serverPath + "/charge", self.checkBattery())
 
 
     # Blocking call that processes network traffic, dispatches callbacks and
@@ -103,13 +118,13 @@ class main():
     # mainloop starts here
     def run(self):
         start = time.time()
-        self.sendVariables()
+        # self.sendVariables()
         while True:
             self.client.loop()
 
             if time.time() - start >= 10:
                 print("10 sec kulunut")
-                self.sendVariables()
+                # self.sendVariables()
                 start = time.time()
 
             time.sleep(0.1)
